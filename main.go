@@ -3,27 +3,20 @@ package main
 import (
 	"go_project_Gin/internal/config"
 	"go_project_Gin/internal/database"
+	"go_project_Gin/internal/route"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Load configuration
 	config.Load()
-
-	// Connect to database
 	database.Connect()
 
-	// Initialize Gin router
 	r := gin.Default()
 
-	// Simple health check route
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
-	// Run the server
-	r.Run(":" + config.App.Port)
+	api := r.Group("/api")
+	route.SetupRoutes(api)
+	log.Println("Server running on port", config.App.Port)
+	log.Fatal(r.Run(":" + config.App.Port))
 }
