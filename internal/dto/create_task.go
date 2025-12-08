@@ -8,7 +8,7 @@ type CreateTaskRequest struct {
 }
 
 func ValidateCreateTask(req CreateTaskRequest) map[string]string {
-	err := validator.New().Struct(req)
+	err := validate.Struct(req)
 	if err == nil {
 		return nil
 	}
