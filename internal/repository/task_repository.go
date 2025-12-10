@@ -22,6 +22,11 @@ func (TaskRepository) GetAllTasks() ([]model.Task, error) {
 	return task, result.Error
 
 }
+func (TaskRepository) GetByUserID(userId uint) ([]model.Task, error) {
+	var task []model.Task
+	result := database.DB.Where("user_id = ?", userId).Find(&task)
+	return task, result.Error
+}
 
 func (TaskRepository) CreateTask(task model.Task) error {
 	// result := database.DB.Create(&task)

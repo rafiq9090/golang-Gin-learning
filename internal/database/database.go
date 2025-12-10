@@ -26,7 +26,7 @@ func Connect() {
 	}
 	DB = db
 	log.Println("Database connected")
-	if err := DB.AutoMigrate(&model.Task{}); err != nil {
+	if err := DB.AutoMigrate(&model.Task{}, &model.User{}); err != nil {
 		log.Fatal("Failed to migrate database", err)
 	}
 	log.Println("Database migrated")

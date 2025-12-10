@@ -3,7 +3,7 @@ package dto
 import "github.com/go-playground/validator/v10"
 
 type CreateTaskRequest struct {
-	Title string `json:"title" validate:"required min=3 max=100"`
+	Title string `json:"title" binding:"required,min=3,max=100"`
 	Done  bool   `json:"done"`
 }
 

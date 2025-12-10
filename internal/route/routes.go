@@ -10,4 +10,5 @@ func SetupRoutes(api *gin.RouterGroup) {
 	api.Use(middleware.RateLimitMiddleware())
 	api.Use(middleware.CORSMiddleware())
 	SetupTaskRoutes(api)
+	SetupAuthRoutes(api)
 }

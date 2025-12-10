@@ -17,7 +17,7 @@ type JWTClaim struct {
 	jwt.RegisteredClaims
 }
 
-func JWTAuth() gin.HandlerFunc {
+func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -31,9 +31,9 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
+		claims := JWTClaim{}
 		tokenString := parts[1]
-		token, err := jwt.ParseWithClaims(tokenString, &JWTClaim{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 			return JWT_SECRET, nil
 		})
 
@@ -42,7 +42,7 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Set("user_id", token.Claims.(JWTClaim).UserId)
+		c.Set("user_id", claims.UserId)
 		c.Next()
 	}
 }

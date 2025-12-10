@@ -1,14 +1,16 @@
 package dto
 
+import "strings"
+
 type RegisterRequest struct {
-	Name     string `json:"name required:true min:3 max:100"`
-	Email    string `json:"email required:true min:3 max:100"`
-	Password string `json:"password required:true min:6 max:100"`
+	Name     string `json:"name" binding:"required,min=2,max=100"`
+	Email    string `json:"email" binding:"required,email,max=100"`
+	Password string `json:"password" binding:"required,min=6,max=100"`
 }
 
 type LoginRequest struct {
-	Email    string `json:"email required:true min:3 max:100"`
-	Password string `json:"password required:true min:6 max:100"`
+	Email    string `json:"email" binding:"required,email,max=100"`
+	Password string `json:"password" binding:"required,min=6,max=100"`
 }
 
 type AuthResponse struct {
@@ -22,13 +24,18 @@ type AuthResponse struct {
 
 func ValidateRegister(req RegisterRequest) map[string]string {
 	errs := make(map[string]string)
-	if req.Name == "" {
+
+	name := strings.TrimSpace(req.Name)
+	email := strings.TrimSpace(req.Email)
+	password := strings.TrimSpace(req.Password)
+
+	if name == "" {
 		errs["name"] = "Name is required"
 	}
-	if req.Email == "" {
+	if email == "" {
 		errs["email"] = "Email is required"
 	}
-	if req.Password == "" || len(req.Password) < 6 {
+	if password == "" || len(password) < 6 {
 		errs["password"] = "Password is required and must be at least 6 characters"
 	}
 	if len(errs) > 0 {

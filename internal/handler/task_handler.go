@@ -10,7 +10,7 @@ import (
 )
 
 func GetAllTasks(c *gin.Context) {
-	task, err := service.Task.GetAllTasks()
+	task, err := service.Task.GetAllTasks(c.GetUint("user_id"))
 	if err != nil {
 		utils.JSONError(c, "Failed to get tasks", http.StatusInternalServerError, nil)
 		return
@@ -20,12 +20,13 @@ func GetAllTasks(c *gin.Context) {
 
 func CreateTask(c *gin.Context) {
 	var input dto.CreateTaskRequest
+	userId := c.GetUint("user_id")
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.JSONError(c, "Invalid input", http.StatusBadRequest, nil)
 		return
 	}
-	task, err := service.Task.CreateTask(input.Title, input.Done)
+	task, err := service.Task.CreateTask(userId, input.Title, input.Done)
 	if err != nil {
 		utils.JSONError(c, "Failed to create task", http.StatusInternalServerError, nil)
 		return

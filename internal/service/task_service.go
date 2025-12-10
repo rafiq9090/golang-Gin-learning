@@ -9,14 +9,15 @@ type TaskService struct{}
 
 var Task = TaskService{}
 
-func (TaskService) GetAllTasks() ([]model.Task, error) {
-	return repository.Task.GetAllTasks()
+func (TaskService) GetAllTasks(userId uint) ([]model.Task, error) {
+	return repository.Task.GetByUserID(userId)
 }
 
-func (TaskService) CreateTask(title string, done bool) (model.Task, error) {
+func (TaskService) CreateTask(userId uint, title string, done bool) (model.Task, error) {
 	task := model.Task{
-		Title: title,
-		Done:  done,
+		UserID: userId,
+		Title:  title,
+		Done:   done,
 	}
 	err := repository.Task.CreateTask(task)
 	return task, err
