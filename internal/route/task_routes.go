@@ -7,9 +7,9 @@ import (
 )
 
 func SetupTaskRoutes(router *gin.RouterGroup) {
-	public := router.Group("")
+	task := router.Group("tasks")
 	{
-		public.GET("/tasks", handler.GetAllTasks)
-		public.POST("/tasks", handler.CreateTask)
+		task.GET("/", handler.GetAllTasks)
+		task.POST("/", handler.CreateTask)
 	}
 }
