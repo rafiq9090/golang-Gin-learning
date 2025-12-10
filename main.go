@@ -15,7 +15,8 @@ func main() {
 
 	r := gin.Default()
 
-	route.SetupRoutes(r)
+	api := r.Group("/api")
+	route.SetupRoutes(api)
 	log.Println("Server running on port", config.App.Port)
 	log.Fatal(r.Run(":" + config.App.Port))
 }

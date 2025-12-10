@@ -6,10 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(r *gin.Engine) {
-	r.Use(middleware.RateLimitMiddleware())
-	r.Use(middleware.CORSMiddleware())
-
-	api := r.Group("/api")
+func SetupRoutes(api *gin.RouterGroup) {
+	api.Use(middleware.RateLimitMiddleware())
+	api.Use(middleware.CORSMiddleware())
 	SetupTaskRoutes(api)
 }

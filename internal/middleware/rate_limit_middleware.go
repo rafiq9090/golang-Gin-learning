@@ -10,34 +10,32 @@ import (
 )
 
 var (
-	visitor = make(map[string]*rate.Limiter)
-	mu      sync.Mutex
+	visitors = make(map[string]*rate.Limiter)
+	mu       sync.Mutex
 )
 
 func getLimiter(ip string) *rate.Limiter {
 	mu.Lock()
 	defer mu.Unlock()
 
-	limiter, exists := visitor[ip]
-
+	limiter, exists := visitors[ip]
 	if !exists {
 		limiter = rate.NewLimiter(rate.Every(time.Second/2), 5)
-		visitor[ip] = limiter
+		visitors[ip] = limiter
 	}
 	return limiter
 }
 
 func RateLimitMiddleware() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		ip := ctx.ClientIP()
+	return func(c *gin.Context) {
+		ip := c.ClientIP()
 		limiter := getLimiter(ip)
 
 		if !limiter.Allow() {
-			ctx.JSON(http.StatusTooManyRequests, gin.H{"error": "Too many requests"})
-			ctx.Abort()
+			c.JSON(http.StatusTooManyRequests, gin.H{"error": "Too many requests"})
+			c.Abort()
 			return
 		}
-		ctx.Next()
+		c.Next()
 	}
-
 }
