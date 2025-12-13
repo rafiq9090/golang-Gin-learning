@@ -5,20 +5,25 @@ import (
 	"go_project_Gin/internal/database"
 	"go_project_Gin/internal/middleware"
 	"go_project_Gin/internal/route"
-	"log"
+	"go_project_Gin/internal/utils"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func main() {
 	config.Load()
+	utils.InitLogger()
+	defer utils.Logger.Sync()
 	database.Connect()
 
-	r := gin.Default()
+	r := gin.New()
 
 	api := r.Group("/api")
 	r.Use(middleware.LoggerMiddleware())
 	route.SetupRoutes(api)
-	log.Println("Server running on port", config.App.Port)
-	log.Fatal(r.Run(":" + config.App.Port))
+	utils.Logger.Info("Server running on port", zap.String("port", config.App.Port))
+	if err := r.Run(":" + config.App.Port); err != nil {
+		utils.Logger.Fatal("Server failed to start", zap.Error(err))
+	}
 }
