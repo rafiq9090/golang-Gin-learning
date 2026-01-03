@@ -3,6 +3,7 @@ package handler
 import (
 	"go_project_Gin/internal/dto"
 	"go_project_Gin/internal/model"
+	"go_project_Gin/internal/notification"
 	"go_project_Gin/internal/service"
 	"go_project_Gin/internal/utils"
 	"net/http"
@@ -33,6 +34,7 @@ func RegisterHandler(c *gin.Context) {
 	}
 
 	user.Password = ""
+	go notification.SendWelcomeEmail(user.Email, user.ID)
 
 	utils.JSONSuccess(c, map[string]any{
 		"message": "User registered successfully",

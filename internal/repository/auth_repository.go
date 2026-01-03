@@ -32,3 +32,11 @@ func (AuthRepository) FindByEmail(email string) (*model.User, error) {
 	}
 	return &user, nil
 }
+
+func (AuthRepository) FindByID(id uint) (*model.User, error) {
+	var user model.User
+	if err := database.DB.First(&user, id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

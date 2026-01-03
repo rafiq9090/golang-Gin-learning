@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"go_project_Gin/internal/config"
 	"go_project_Gin/internal/model"
@@ -44,4 +45,8 @@ func (AuthService) Login(email string, password string) (*model.User, string, er
 		return nil, "", err
 	}
 	return user, tokenString, nil
+}
+
+func (AuthService) GetUserById(ctx context.Context, id uint) (*model.User, error) {
+	return repository.Auth.FindByID(id)
 }
