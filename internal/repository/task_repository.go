@@ -30,11 +30,29 @@ func (TaskRepository) GetByUserID(ctx context.Context, userId uint) ([]model.Tas
 	return task, result.Error
 }
 
-func (TaskRepository) CreateTask(ctx context.Context, task model.Task) error {
+func (TaskRepository) CreateTask(ctx context.Context, task *model.Task) error {
 	// result := database.DB.Create(&task)
 	// if result.Error != nil {
 	// 	return task, result.Error
 	// }
 	// return task, nil
-	return database.DB.WithContext(ctx).Create(&task).Error
+	return database.DB.WithContext(ctx).Create(task).Error
+}
+
+func (TaskRepository) GetByID(ctx context.Context, id uint, userId uint) (*model.Task, error) {
+	var task model.Task
+	err := database.DB.WithContext(ctx).Where("id = ? AND user_id = ?", id, userId).First(&task).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &task, nil
+}
+
+func (TaskRepository) UpdateTask(ctx context.Context, task *model.Task) error {
+	return database.DB.WithContext(ctx).Save(task).Error
+}
+
+func (TaskRepository) DeleteTask(ctx context.Context, id uint) error {
+	return database.DB.WithContext(ctx).Delete(&model.Task{}, id).Error
 }

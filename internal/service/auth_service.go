@@ -11,8 +11,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var JWT_SECRET = []byte(config.App.JWTSecret)
-
 type AuthService struct{}
 
 var Auth = AuthService{}
@@ -41,7 +39,7 @@ func (AuthService) Login(email string, password string) (*model.User, string, er
 		"user_id": user.ID,
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	})
-	tokenString, err := token.SignedString(JWT_SECRET)
+	tokenString, err := token.SignedString([]byte(config.App.JWTSecret))
 	if err != nil {
 		return nil, "", err
 	}

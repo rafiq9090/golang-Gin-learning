@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"go_project_Gin/internal/config"
 	"go_project_Gin/internal/dto"
 	"go_project_Gin/internal/model"
 	"go_project_Gin/internal/service"
@@ -10,8 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-var JWT_SECRET = []byte(config.App.JWTSecret)
 
 func RegisterHandler(c *gin.Context) {
 	var req dto.RegisterRequest

@@ -10,8 +10,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var JWT_SECRET = []byte(config.App.JWTSecret)
-
 type JWTClaim struct {
 	UserId uint `json:"user_id"`
 	jwt.RegisteredClaims
@@ -34,7 +32,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		claims := JWTClaim{}
 		tokenString := parts[1]
 		token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
-			return JWT_SECRET, nil
+			return []byte(config.App.JWTSecret), nil
 		})
 
 		if err != nil || !token.Valid {
