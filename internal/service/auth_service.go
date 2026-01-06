@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"go_project_Gin/internal/config"
+	"go_project_Gin/internal/dto"
 	"go_project_Gin/internal/model"
 	"go_project_Gin/internal/repository"
 	"time"
@@ -36,10 +37,13 @@ func (AuthService) Login(email string, password string) (*model.User, string, er
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, "", errors.New("Invalid credentials")
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
-	})
+	claims := dto.JWTClaim{
+		UserId: user.ID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(config.App.JWTSecret))
 	if err != nil {
 		return nil, "", err

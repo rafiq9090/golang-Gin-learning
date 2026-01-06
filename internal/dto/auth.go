@@ -1,6 +1,10 @@
 package dto
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type RegisterRequest struct {
 	Name     string `json:"name" binding:"required,min=2,max=100"`
@@ -20,6 +24,11 @@ type AuthResponse struct {
 		Name  string `json:"name"`
 		Email string `json:"email"`
 	} `json:"user"`
+}
+
+type JWTClaim struct {
+	UserId uint `json:"user_id"`
+	jwt.RegisteredClaims
 }
 
 func ValidateRegister(req RegisterRequest) map[string]string {

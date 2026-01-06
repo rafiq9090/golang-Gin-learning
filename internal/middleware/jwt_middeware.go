@@ -2,18 +2,15 @@ package middleware
 
 import (
 	"go_project_Gin/internal/config"
+	"go_project_Gin/internal/dto"
 	"go_project_Gin/internal/utils"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"go.uber.org/zap"
 )
-
-type JWTClaim struct {
-	UserId uint `json:"user_id"`
-	jwt.RegisteredClaims
-}
 
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -29,7 +26,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		claims := JWTClaim{}
+		claims := dto.JWTClaim{}
 		tokenString := parts[1]
 		token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 			return []byte(config.App.JWTSecret), nil
@@ -40,6 +37,14 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		if claims.UserId == 0 {
+			utils.Logger.Error("Token parsed but UserId is 0", zap.Any("claims", claims))
+			utils.JSONError(c, "Invalid token claims", http.StatusUnauthorized, nil)
+			c.Abort()
+			return
+		}
+
 		c.Set("user_id", claims.UserId)
 		c.Next()
 	}

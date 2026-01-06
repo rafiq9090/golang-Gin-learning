@@ -10,7 +10,14 @@ import (
 var Logger *zap.Logger
 
 func InitLogger() {
-	file, _ := os.OpenFile("logs/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err := os.MkdirAll("logs", 0755); err != nil {
+		panic(err)
+	}
+
+	file, err := os.OpenFile("logs/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
 
 	fileWriter := zapcore.AddSync(file)
 

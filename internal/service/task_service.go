@@ -11,8 +11,8 @@ type TaskService struct{}
 
 var Task = TaskService{}
 
-func (TaskService) GetAllTasks(ctx context.Context) ([]model.Task, error) {
-	return repository.Task.GetAllTasks(ctx)
+func (TaskService) GetAllTasks(ctx context.Context, userId uint) ([]model.Task, error) {
+	return repository.Task.GetByUserID(ctx, userId)
 }
 
 func (TaskService) CreateTask(ctx context.Context, userId uint, title string, done bool) (model.Task, error) {

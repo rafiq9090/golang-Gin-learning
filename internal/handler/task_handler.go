@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"go_project_Gin/internal/cache"
 	"go_project_Gin/internal/dto"
 	"go_project_Gin/internal/notification"
 	"go_project_Gin/internal/service"
@@ -9,15 +10,25 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func GetAllTasks(c *gin.Context) {
 	ctx := c.Request.Context()
-	task, err := service.Task.GetAllTasks(ctx)
+	userId := c.GetUint("user_id")
+
+	if tasks, found := cache.GetTasks(userId); found {
+		utils.Logger.Info("Cache hit for user tasks", zap.Uint("user_id", userId))
+		utils.JSONSuccess(c, tasks)
+		return
+	}
+
+	task, err := service.Task.GetAllTasks(ctx, userId)
 	if err != nil {
 		utils.JSONError(c, "Failed to get tasks", http.StatusInternalServerError, nil)
 		return
 	}
+	cache.SetTasks(userId, task)
 
 	utils.JSONSuccess(c, task)
 }
